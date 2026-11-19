@@ -18,7 +18,7 @@
   }
   function externalLink(label, url, cls = 'text-link') {
     const href = externalUrl(url); if (!href) return null;
-    const a = node('a', cls); a.append(node('span','',label),node('span','','↗')); a.lastChild.setAttribute('aria-hidden','true');
+    const a = node('a', cls); a.append(node('span','',label),node('span','external-mark','↗')); a.lastChild.setAttribute('aria-hidden','true');
     a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.setAttribute('aria-label', label + '（新しいタブで開く）'); return a;
   }
   function detail(title, body, prefix) {
@@ -33,7 +33,7 @@
   const meta = data.meta || {};
   document.querySelectorAll('[data-field]').forEach(el => { const v = str(meta[el.dataset.field]); if (v) el.textContent = v; });
   if (meta.siteIsDraft === false) { document.querySelector('.draft-bar').hidden = true; fill('footer-status','','ゼミ説明会のご案内'); }
-  document.title = (str(meta.seminar) || '杉山ゼミナール') + ' — ' + (str(meta.hookLine1) || 'こころを知る。') + (str(meta.hookLine2) || '未来をつくる。');
+  document.title = (str(meta.seminar) || '杉山ゼミナール') + '｜' + (str(meta.affiliation) || '神奈川大学 人間科学部');
   fill('hook-one',meta.hookLine1,'こころを知る。'); fill('hook-two',meta.hookLine2,'未来をつくる。'); fill('hero-intro',meta.intro,'心理学で、自分と他者と社会を理解する。その学びから、これからを考える。');
   const heroImg = picture(meta.heroImage,meta.heroImageAlt,'hero-photo'); if (heroImg) { heroImg.loading = 'eager'; $('hero-art').replaceChildren(heroImg); }
   const about = data.about || {};
@@ -47,16 +47,17 @@
   ];
   const committeeRoles=list(about.committeeRoles).length?list(about.committeeRoles):list(about.committeeNames).map(name=>({name,role:''}));
   committeeRoles.filter(Boolean).forEach((entry,i)=>{const item=node('li','committee-role');item.append(designSvg('<g stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">'+committeeIcons[i%5]+'</g>','committee-icon','0 0 24 24'),node('h4','',str(entry.name)));if(str(entry.role))item.append(node('p','',str(entry.role)));$('committee-list').append(item);});
+  // The diagrams show a relationship network, alternative paths and shared work.
   const skillArt = [
-    '<path d="M25 45H95M60 25V66" stroke="#bda4ce"/><circle cx="26" cy="45" r="17" fill="#eee4f5" stroke="#75528a"/><circle class="movable" cx="61" cy="25" r="15" fill="#fff" stroke="#75528a"/><circle cx="95" cy="45" r="17" fill="#eee4f5" stroke="#75528a"/><circle cx="60" cy="67" r="13" fill="#352044"/><path d="M26 43v4m67-2h4m-37-22v4" stroke="#75528a"/>',
-    '<path d="M18 71 60 8 102 71Z" stroke="#b69bc7"/><path d="m18 71 42-22 42 22M60 8v41" stroke="#b69bc7" stroke-dasharray="3 4"/><g class="movable"><rect x="43" y="33" width="34" height="34" transform="rotate(-45 60 50)" fill="#e9dff1" stroke="#75528a"/></g><circle cx="60" cy="49" r="5" fill="#352044"/><path d="M15 80h90" stroke="#75528a"/>',
-    '<path d="M14 72h91M18 72V54h23v18M47 72V37h23v35M76 72V20h23v52" stroke="#b69bc7"/><path class="movable" d="m18 37 26-14 20 5L96 9m-12 0h12v12" stroke="#352044" stroke-width="2"/><path d="M18 55h23v17H18zM47 38h23v34H47zM76 21h23v51H76z" fill="#e9dff1" fill-opacity=".6"/>'
+    '<g stroke="currentColor" stroke-width="1.5"><path d="m24 57 38-35 36 35-38 12-36-12Z M62 22l-2 47"/><g fill="#fbfaf8"><circle cx="24" cy="57" r="9"/><circle cx="98" cy="57" r="9"/><circle cx="60" cy="69" r="7"/></g><circle cx="62" cy="22" r="11" fill="currentColor"/></g>',
+    '<g stroke="currentColor" stroke-width="1.5"><path d="M15 65h23c12 0 14-11 22-22s15-22 29-22h10M38 65c15 0 23-4 34-13l18-13h9M38 65h61"/><g fill="#fbfaf8"><circle cx="99" cy="39" r="4"/><circle cx="99" cy="65" r="4"/></g><circle cx="99" cy="21" r="5" fill="currentColor"/><circle cx="15" cy="65" r="5" fill="currentColor"/></g>',
+    '<g stroke="currentColor" stroke-width="1.5"><path d="M15 23h28m-28 22h28M15 67h28M43 23v44m0-22h20"/><rect x="63" y="26" width="40" height="38" rx="2"/><path d="M74 39h18m-18 9h13"/><g fill="currentColor"><circle cx="15" cy="23" r="4"/><circle cx="15" cy="45" r="4"/><circle cx="15" cy="67" r="4"/></g></g>'
   ];
-  list(about.skills).filter(Boolean).forEach((skill,i) => { const card = node('article','skill-card'); card.dataset.reveal = ''; card.style.setProperty('--reveal-delay',(i*65)+'ms'); const top = node('div','skill-top'); top.append(node('span','',String(i+1).padStart(2,'0')),node('span','',str(skill.english))); card.append(top,designSvg(skillArt[i%3],'skill-art'),node('h4','',str(skill.title)),node('p','',str(skill.body))); $('about-skills').append(card); });
+  list(about.skills).filter(Boolean).forEach((skill,i) => { const card = node('article','skill-card'); card.dataset.reveal = ''; card.style.setProperty('--reveal-delay',(i*65)+'ms'); const top = node('div','skill-top'); top.append(node('span','',str(skill.english))); card.append(top,designSvg(skillArt[i%3],'skill-art'),node('h4','',str(skill.title)),node('p','',str(skill.body))); $('about-skills').append(card); });
   const aboutImg = picture(about.photo,about.photoAlt); if (aboutImg) $('about-photo').append(aboutImg);
-  [['学びの進め方',about.learning,'LEARNING PROCESS'],['大切にしたい参加の姿勢',about.policy,'OUR VALUES']].forEach(([title,items,label]) => {
+  [['学びの進め方',about.learning],['参加するときに大切にしたいこと',about.policy]].forEach(([title,items]) => {
     if (!list(items).length) return;
-    const panel=node('section','learning-guide');const heading=node('div','learning-guide-heading');heading.append(node('span','eyebrow',label),node('h3','',title));panel.append(heading);
+    const panel=node('section','learning-guide');const heading=node('div','learning-guide-heading');heading.append(node('h3','',title));panel.append(heading);
     const rows=node('ol','learning-rows');list(items).filter(Boolean).forEach((item,i)=>{const row=node('li','learning-item');const copy=node('div');copy.append(node('h4','',str(item.title)),node('p','',str(item.body)));row.append(node('span','learning-index',String(i+1).padStart(2,'0')),copy);rows.append(row);});panel.append(rows);$('learning-details').append(panel);
   });
 
@@ -69,7 +70,17 @@
   fill('research-overview-copy',data.researchTrend,'自分のこと、人との関係、社会や文化。身近な疑問から、心理学の問いが広がります。');
   const normalize=value=>String(value||'').normalize('NFKC').toLocaleLowerCase('ja');
   let category='',shown=6;
-  const domainButtons=[];
+  const domainButtons = [];
+  const domainSelect = node('select', 'domain-select');
+  domainSelect.setAttribute('aria-label', '研究領域を選択');
+  domainSelect.setAttribute('aria-controls', 'research-list');
+  $('research-map').append(domainSelect);
+  function selectCategory(name) {
+    category = name;
+    shown = 6;
+    renderResearch();
+  }
+  domainSelect.addEventListener('change', () => selectCategory(domainSelect.value));
   function matchingPapers(){
     const terms=normalize($('research-search').value).trim().split(/\s+/).filter(Boolean);
     const matching=research.filter(r=>(!category||r.categories.includes(category))&&terms.every(term=>normalize([r.title,...r.categories,str(r.summary)].join(' ')).includes(term)));
@@ -84,22 +95,49 @@
   function clearResearch(){category='';shown=6;$('research-search').value='';renderResearch();}
   function renderResearch(){
     const matching=matchingPapers(),visible=matching.slice(0,shown),query=$('research-search').value.trim();$('research-list').replaceChildren();
-    $('research-current-title').textContent=category||'いろいろな関心から、生まれた問い。';
+    $('research-current-title').textContent=category || (query ? 'キーワード検索の結果' : '卒業論文の題目');
     const group=groups.find(g=>g.name===category);fill('research-description',group?.description,query?'「'+query+'」を含む題目を表示しています。':'気になる領域や言葉から、卒論のテーマを探してみてください。');
     $('research-count').textContent='表示 '+visible.length+'件 / 該当 '+matching.length+'件';
     $('research-status').textContent=(category||'すべての領域')+(query?'、キーワード「'+query+'」':'')+'の題目が'+matching.length+'件見つかりました。'+visible.length+'件を表示しています。';
     visible.forEach(r=>{const item=node('article','research-example');const tags=node('div','example-tags');r.categories.forEach(name=>tags.append(node('span','example-tag',name)));item.append(tags,node('h4','',r.title));if(str(r.summary))item.append(node('p','research-summary',r.summary));const extra=[str(r.year),str(r.method)].filter(Boolean).join(' / ');if(extra)item.append(node('p','research-summary',extra));$('research-list').append(item);});
     if(!matching.length){const empty=node('div','research-empty');empty.append(node('h4','','一致する題目がありません。'),node('p','','別の言葉で検索するか、領域の絞り込みを解除してみてください。'));const reset=node('button','button button-dark','条件をクリア');reset.type='button';reset.addEventListener('click',()=>{clearResearch();$('research-search').focus({preventScroll:true});});empty.append(reset);$('research-list').append(empty);}
+    domainSelect.value = category;
     domainButtons.forEach(({button,name})=>button.setAttribute('aria-pressed',String(name===category)));
     $('research-more').hidden=visible.length>=matching.length;
     $('research-more').replaceChildren(document.createTextNode('次の'+Math.min(6,matching.length-visible.length)+'件を見る'),node('span','','＋'));$('research-more').lastChild.setAttribute('aria-hidden','true');
     $('research-reset').disabled=!category&&!query;
   }
-  ['',...groupNames].forEach(name=>{const button=node('button','domain-button');button.type='button';button.setAttribute('aria-controls','research-list');button.append(node('span','domain-label',name||'すべて'));button.addEventListener('click',()=>{category=name;shown=6;renderResearch();});domainButtons.push({button,name});$('research-map').append(button);});
+  ['', ...groupNames].forEach(name => {
+    const label = name || 'すべての領域';
+    const option = node('option', '', label);
+    option.value = name;
+    domainSelect.append(option);
+    const button = node('button', 'domain-button');
+    button.type = 'button';
+    button.setAttribute('aria-controls', 'research-list');
+    button.append(node('span', 'domain-label', label));
+    button.addEventListener('click', () => selectCategory(name));
+    domainButtons.push({button, name});
+    $('research-map').append(button);
+  });
   $('research-search').addEventListener('input',()=>{shown=6;renderResearch();});
-  $('research-reset').addEventListener('click',clearResearch);
+  $('research-reset').addEventListener('click', () => {
+    clearResearch();
+    $('research-search').focus({preventScroll:true});
+  });
   $('research-back').addEventListener('click',()=>{$('research-search').focus({preventScroll:true});document.querySelector('.research-controls').scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth',block:'start'});});
-  $('research-more').addEventListener('click',()=>{shown+=6;renderResearch();});renderResearch();
+  $('research-more').addEventListener('click', () => {
+    const previousCount = $('research-list').children.length;
+    shown += 6;
+    renderResearch();
+    const heading = $('research-list').children[previousCount]?.querySelector('h4');
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({preventScroll:true});
+      heading.scrollIntoView({block:'nearest', behavior:'instant'});
+    }
+  });
+  renderResearch();
 
   const professor=data.professor||{};
   $('professor-name').append(document.createTextNode(str(professor.name)||'杉山 崇'),node('span','','先生')); fill('professor-title',professor.title);fill('professor-bio',professor.bio);
@@ -117,17 +155,17 @@
     $('interview-list').append(answer);
   });
   if(!$('interview-list').children.length)$('interview-list').append(node('p','small-muted','インタビューを準備しています。'));
-  list(professor.books).filter(b=>b&&str(b.title)&&b.confirmed===true).forEach((book,i)=>{const card=node('article','book-card');card.append(picture(book.image,str(book.title)+'の表紙','book-cover')||node('span','book-marker',String(i+1).padStart(2,'0')));const copy=node('div');copy.append(node('h4','',book.title));if(str(book.subtitle))copy.append(node('p','',book.subtitle));if(str(book.publisher))copy.append(node('p','publisher',book.publisher));if(str(book.credit))copy.append(node('p','',book.credit));if(str(book.description))copy.append(node('p','',book.description));const label=externalUrl(book.url).includes('ndlsearch.ndl.go.jp')?'国立国会図書館の書誌':'出版社の書籍情報';const link=externalLink(label,book.url);if(link)copy.append(link);card.append(copy);$('books-list').append(card);});
+  list(professor.books).filter(b=>b&&str(b.title)&&b.confirmed===true).forEach((book,i)=>{const card=node('article','book-card');card.append(picture(book.image,str(book.title)+'の表紙','book-cover')||node('span','book-marker',String(i+1).padStart(2,'0')));const copy=node('div');copy.append(node('h4','',book.title));if(str(book.subtitle))copy.append(node('p','',book.subtitle));if(str(book.publisher))copy.append(node('p','publisher',book.publisher));if(str(book.credit))copy.append(node('p','',book.credit));if(str(book.description))copy.append(node('p','',book.description));const label=externalUrl(book.url).includes('ndlsearch.ndl.go.jp')?'国立国会図書館の書誌':'出版社の書籍情報';const link=externalLink(label,book.url);if(link){link.setAttribute('aria-label',book.title+'：'+label+'（新しいタブで開く）');copy.append(link);}card.append(copy);$('books-list').append(card);});
   if(!$('books-list').children.length)$('books-list').append(node('p','small-muted','出版物の情報を準備しています。'));
 
   const members=data.members||{};fill('members-date',members.asOf);fill('members-note',members.note);
-  list(members.grades).filter(Boolean).forEach((grade,i)=>{const card=node('article','member-card');const head=node('div','member-card-head');head.append(node('h4','',str(grade.label)||'学年'),node('span','eyebrow','YEAR '+String(i+2).padStart(2,'0')));const badge=demoBadge(grade);if(badge)head.append(badge);card.append(head);const known=Number.isInteger(grade.count)&&grade.count>=0;const count=node('p','member-count');count.append(node('strong','',known?String(grade.count):'—'),node('span','',known?'人':'確認中'));card.append(count);addDemo(card,grade,'人数は表示サンプルです。実際の集計ではありません。');$('members-list').append(card);});
+  list(members.grades).filter(Boolean).forEach((grade,i)=>{const card=node('article','member-card');const head=node('div','member-card-head');head.append(node('h4','',str(grade.label)||'学年'));const badge=demoBadge(grade);if(badge)head.append(badge);card.append(head);const known=Number.isInteger(grade.count)&&grade.count>=0;const count=node('p','member-count');count.append(node('strong','',known?String(grade.count):'—'),node('span','',known?'人':'確認中'));card.append(count);addDemo(card,grade,'人数は表示サンプルです。実際の集計ではありません。');$('members-list').append(card);});
   if(!$('members-list').children.length)$('members-list').append(node('p','small-muted','メンバー情報を準備しています。'));
   const overview=members.genderOverview||{};
   const overviewValues=[overview.femalePercent,overview.malePercent];
   if(overviewValues.every(n=>typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=100)&&Math.abs(overviewValues[0]+overviewValues[1]-100)<0.001){
     const box=$('gender-overview');box.hidden=false;
-    const caption=node('div','gender-overview-caption');caption.append(node('span','eyebrow','GENDER BALANCE'),node('h4','','全体の男女比の目安'),node('p','',str(overview.note)));
+    const caption=node('div','gender-overview-caption');caption.append(node('h4','','全体の男女比の目安'),node('p','',str(overview.note)));
     const graphic=node('div','gender-overview-graphic');const bar=node('div','gender-overview-bar');bar.setAttribute('role','img');bar.setAttribute('aria-label','男女比の目安。女性 約'+overview.femalePercent+'%、男性 約'+overview.malePercent+'%。学年によって異なります。');
     const labels=node('div','gender-overview-labels');
     [['女性',overview.femalePercent,'female'],['男性',overview.malePercent,'male']].forEach(([label,value,cls])=>{const segment=node('span',cls);segment.style.width=value+'%';bar.append(segment);const item=node('p',cls);item.append(node('span','',label),node('strong','','約'+value+'%'));labels.append(item);});
@@ -144,7 +182,7 @@
   });if(years.length)renderYear(0);else $('year-panel').append(node('p','small-muted','年間予定を準備しています。'));
   if(!years.some(y=>externalUrl(y.videoUrl)))$('video-grid').hidden=true;
   const introVideo=externalLink(str(meta.introductionVideoTitle)||'杉山ゼミの紹介動画',meta.introductionVideoUrl,'intro-video-link');
-  if(introVideo){const box=$('introduction-video');box.hidden=false;introVideo.replaceChildren();const play=node('span','intro-video-play');play.setAttribute('aria-hidden','true');const copy=node('div');copy.append(node('span','eyebrow','SEMINAR FILM'),node('h3','',str(meta.introductionVideoTitle)||'杉山ゼミの紹介動画'),node('p','','学びと日常を、動画でも。'));introVideo.append(play,copy,node('span','intro-video-action','YouTubeで見る ↗'));box.append(introVideo);}
+  if(introVideo){const box=$('introduction-video');box.hidden=false;introVideo.replaceChildren();const play=node('span','intro-video-play');play.setAttribute('aria-hidden','true');const copy=node('div');copy.append(node('h3','',str(meta.introductionVideoTitle)||'杉山ゼミの紹介動画'));introVideo.append(play,copy,node('span','intro-video-action','YouTubeで見る ↗'));box.append(introVideo);}
   const gallery=list(data.gallery).filter(g=>g&&imagePath(g.src));if(gallery.length){$('gallery-list').className='gallery-grid';gallery.forEach(g=>{const f=node('figure');f.append(picture(g.src,g.alt));$('gallery-list').append(f);});}else{$('gallery-list').className='gallery-empty';const copy=node('div');copy.append(node('h4','','ゼミの風景を、ここに。'),node('p','','集合写真や活動の様子を掲載するスペースです。'));$('gallery-list').append(designSvg('<path d="M12 20h66v50H12zM24 8h66v50" stroke="currentColor"/><circle cx="30" cy="35" r="6" stroke="currentColor"/><path d="m15 65 24-21 15 12 10-10 12 15" stroke="currentColor"/>','', '0 0 100 80'),copy);}
 
   const admissions=data.admissions||{};fill('admissions-notice',admissions.notice);$('admissions-notice').hidden=!str(admissions.notice);
@@ -158,7 +196,11 @@
     const row=node('article','briefing-row');
     const dateParts=str(event.date).match(/(\d+)月(\d+)日[（(]([^）)]+)[）)]/);
     const eventIso=str(event.dateIso);
-    const past=validIsoDate(eventIso)&&eventIso<todayJst;
+    const ending = str(event.time).match(/[〜～–−-]\s*([01]?\d|2[0-3]):([0-5]\d)\s*$/);
+    const endTime = ending && validIsoDate(eventIso)
+      ? Date.parse(eventIso + 'T' + ending[1].padStart(2,'0') + ':' + ending[2] + ':00+09:00')
+      : NaN;
+    const past = validIsoDate(eventIso) && (eventIso < todayJst || Date.now() >= endTime);
     const date=node('h4','briefing-date');
     if(dateParts){const month=dateParts[1],day=dateParts[2];date.append(node('span','date-main',month+'.'+day.padStart(2,'0')),node('span','date-weekday',dateParts[3]+'曜日'));}
     else date.textContent=str(event.date);
@@ -168,9 +210,9 @@
     [['時間',str(event.time)],['場所',str(event.place)]].forEach(([label,value])=>{const pair=node('div');pair.append(node('dt','',label),node('dd','',value));info.append(pair);});row.append(info);$('briefing-list').append(row);
   });
   fill('admissions-intro',admissions.intro,'自分の関心と、ここで取り組みたいことを聞かせてください。');
-  const steps=list(admissions.steps).filter(Boolean);steps.slice(0,4).forEach((step,i)=>{const item=node('li','admission-step');const copy=node('div','step-detail');copy.append(node('span','eyebrow','STEP '+String(i+1).padStart(2,'0')),node('h3','',str(step.title)),node('p','',str(step.body)));if(str(step.when))copy.append(node('span','step-when',step.when));item.append(node('span','step-number',String(i+1).padStart(2,'0')),copy);$('admission-steps').append(item);});
+  const steps=list(admissions.steps).filter(Boolean);steps.slice(0,4).forEach((step,i)=>{const item=node('li','admission-step');const copy=node('div','step-detail');copy.append(node('h3','',str(step.title)),node('p','',str(step.body)));if(str(step.when))copy.append(node('span','step-when',step.when));item.append(node('span','step-number',String(i+1).padStart(2,'0')),copy);$('admission-steps').append(item);});
   if(steps.length>4){steps.slice(4).forEach(step=>{const row=node('div','condition-row');const copy=node('div');copy.append(node('p','',str(step.body)));if(str(step.when))copy.append(node('span','step-when',step.when));row.append(node('h3','',str(step.title)||'選考の補足'),copy);$('admissions-conditional').append(row);});}else $('admissions-conditional').hidden=true;
-  fill('admissions-deadline',admissions.deadline,'募集日程・提出方法は、確定後にお知らせします。');$('admissions-link').append(externalLink('募集案内を見る',admissions.url,'button button-dark')||node('span','waiting-link','正式な案内・応募はWebステーションへ'));
+  fill('admissions-deadline',admissions.deadline,'募集日程・提出方法は、確定後にお知らせします。');$('admissions-link').append(externalLink('Webステーションを開く',admissions.url,'button button-dark')||node('span','waiting-link','正式な案内・応募はWebステーションへ'));
   const faqGroups=new Map();list(admissions.faq).filter(Boolean).forEach(faq=>{const group=str(faq.group)||'参加・応募について';if(!faqGroups.has(group))faqGroups.set(group,[]);faqGroups.get(group).push(faq);});
   faqGroups.forEach((items,title)=>{const section=node('section','faq-group');section.append(node('h4','',title));items.forEach(faq=>section.append(detail(str(faq.question),str(faq.answer)||'詳細を準備しています。','Q')));$('faq-list').append(section);});
   [['2年生のInstagram',meta.instagramUrl],['3年生のInstagram',meta.instagramSecondaryUrl],['4年生のInstagram',meta.instagramTertiaryUrl]].forEach(([label,url])=>{const link=externalLink(label,url,'button');if(link)$('instagram-link').append(link);});
@@ -191,8 +233,24 @@
   if(firstArt||secondArt){const interviewArt=studentArt(meta.illustrationSecondary||meta.illustration,meta.illustrationSecondaryAlt||meta.illustrationAlt);$('interview-illustration').hidden=false;$('interview-illustration').append(interviewArt);const faqArt=studentArt(meta.illustration,meta.illustrationAlt);$('faq-illustration').hidden=false;$('faq-illustration').append(faqArt);}
   const official=externalLink('大学・ゼミの公式案内',meta.officialUrl);if(official)$('official-link').append(official);
 
-  const menu=document.querySelector('.menu-toggle'),nav=$('site-nav');function closeMenu(){menu.setAttribute('aria-expanded','false');nav.classList.remove('is-open');}
-  menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('is-open',open);});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));document.addEventListener('click',e=>{if(!e.target.closest('.site-header'))closeMenu();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){closeMenu();menu.focus();}});matchMedia('(min-width:961px)').addEventListener('change',closeMenu);
+  const menu = document.querySelector('.menu-toggle');
+  const nav = $('site-nav');
+  function closeMenu() {
+    menu.setAttribute('aria-expanded', 'false');
+    nav.classList.remove('is-open');
+  }
+  nav.addEventListener('focusout', event => {
+    if (event.relatedTarget && !nav.contains(event.relatedTarget) && event.relatedTarget !== menu) closeMenu();
+  });
+  menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('is-open',open);});nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    const wasOpen = menu.getAttribute('aria-expanded') === 'true';
+    closeMenu();
+    const target = document.getElementById(link.hash.slice(1));
+    if (wasOpen && target) {
+      target.tabIndex = -1;
+      target.focus({preventScroll:true});
+    }
+  }));document.addEventListener('click',e=>{if(!e.target.closest('.site-header'))closeMenu();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){closeMenu();menu.focus();}});matchMedia('(min-width:961px)').addEventListener('change',closeMenu);
   let scrollQueued=false;function updateProgress(){const max=document.documentElement.scrollHeight-innerHeight;$('reading-progress').style.transform='scaleX('+(max>0?Math.max(0,Math.min(1,scrollY/max)):0)+')';scrollQueued=false;}addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(updateProgress);}},{passive:true});addEventListener('resize',updateProgress);updateProgress();
   if('IntersectionObserver'in window){const navLinks=[...nav.querySelectorAll('a')];const activeObserver=new IntersectionObserver(entries=>{entries.filter(e=>e.isIntersecting).forEach(entry=>{[...navLinks,...document.querySelectorAll('.chapter-index a')].forEach(a=>{const current=a.hash==='#'+entry.target.id;a.classList.toggle('is-current',current);if(current)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});});},{rootMargin:'-15% 0px -65% 0px',threshold:0});['top','about','research','people','activities','admissions'].forEach(id=>activeObserver.observe($(id)));
     if(!reducedMotion.matches){document.documentElement.classList.add('motion-ready');const reveal=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');reveal.unobserve(entry.target);}});},{threshold:.08});document.querySelectorAll('[data-reveal]').forEach(el=>reveal.observe(el));}
