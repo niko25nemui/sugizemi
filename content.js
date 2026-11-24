@@ -9,11 +9,11 @@ window.SEMINAR_CONTENT = {
     "officialUrl": "",
     "heroImage": "",
     "heroImageAlt": "",
-    "illustration": "assets/sugiyama-illustration-left.png",
+    "illustration": "assets/sugiyama-illustration-left.webp",
     "illustrationAlt": "3年生のゼミ生が描いた、杉山先生をイメージしたイラスト（左向き）",
     "shortName": "杉ゼミ",
     "affiliation": "神奈川大学 人間科学部",
-    "illustrationSecondary": "assets/sugiyama-illustration-right.png",
+    "illustrationSecondary": "assets/sugiyama-illustration-right.webp",
     "illustrationSecondaryAlt": "杉山先生をイメージしたイラスト（右向き）",
     "illustrationCredit": "3年生のゼミ生が、杉山先生をイメージして描いてくれました。",
     "instagramSecondaryUrl": "https://www.instagram.com/sugiyamaseminar18/",
@@ -108,7 +108,7 @@ window.SEMINAR_CONTENT = {
     "name": "杉山 崇",
     "title": "神奈川大学人間科学部教授。大学院人間科学研究科委員長、就職支援部長を兼任。",
     "bio": "臨床心理士、公認心理師、1級キャリアコンサルティング技能士。日本学術振興会特別研究員、長野大学専任講師、山梨英和大学准教授などを経て現職。キャリアコンサルティングに関する行政の仕事にも携わる。",
-    "photo": "assets/professor-portrait.jpg",
+    "photo": "assets/professor-portrait.webp",
     "photoAlt": "杉山崇先生のポートレート",
     "interview": [
       {
@@ -821,27 +821,27 @@ window.SEMINAR_CONTENT = {
   },
   "gallery": [
     {
-      "src": "assets/professor-classroom.jpg",
+      "src": "assets/professor-classroom.webp",
       "alt": "教室で説明する杉山崇先生",
       "caption": "教室でのひとコマ"
     },
     {
-      "src": "assets/seminar-bbq.jpg",
+      "src": "assets/seminar-bbq.webp",
       "alt": "バーベキューの網で焼く食材",
       "caption": "バーベキューのひとコマ"
     },
     {
-      "src": "assets/seminar-fruit.jpg",
+      "src": "assets/seminar-fruit.webp",
       "alt": "ボウルのフルーツを取り分ける手元",
       "caption": "フルーツを取り分ける時間"
     },
     {
-      "src": "assets/seminar-slippers.jpg",
+      "src": "assets/seminar-slippers.webp",
       "alt": "玄関に集まった色とりどりのスリッパ",
       "caption": "集まったスリッパ"
     },
     {
-      "src": "assets/seminar-waterfront.jpg",
+      "src": "assets/seminar-waterfront.webp",
       "alt": "夜の水辺に映る光",
       "caption": "水辺の風景"
     }

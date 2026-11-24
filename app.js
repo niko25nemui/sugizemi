@@ -109,7 +109,8 @@
   }
   ['', ...groupNames].forEach(name => {
     const label = name || 'すべての領域';
-    const option = node('option', '', label);
+    const count = name ? research.filter(r => r.categories.includes(name)).length : research.length;
+    const option = node('option', '', label + '（' + count + '件）');
     option.value = name;
     domainSelect.append(option);
     const button = node('button', 'domain-button');
@@ -121,6 +122,8 @@
     $('research-map').append(button);
   });
   $('research-search').addEventListener('input',()=>{shown=6;renderResearch();});
+  $('research-search').setAttribute('enterkeyhint','search');
+  $('research-search').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();$('research-current-title').focus({preventScroll:true});$('research-panel').scrollIntoView({block:'start',behavior:'instant'});}});
   $('research-reset').addEventListener('click', () => {
     clearResearch();
     $('research-search').focus({preventScroll:true});
@@ -155,7 +158,25 @@
     $('interview-list').append(answer);
   });
   if(!$('interview-list').children.length)$('interview-list').append(node('p','small-muted','インタビューを準備しています。'));
-  list(professor.books).filter(b=>b&&str(b.title)&&b.confirmed===true).forEach((book,i)=>{const card=node('article','book-card');card.append(picture(book.image,str(book.title)+'の表紙','book-cover')||node('span','book-marker',String(i+1).padStart(2,'0')));const copy=node('div');copy.append(node('h4','',book.title));if(str(book.subtitle))copy.append(node('p','',book.subtitle));if(str(book.publisher))copy.append(node('p','publisher',book.publisher));if(str(book.credit))copy.append(node('p','',book.credit));if(str(book.description))copy.append(node('p','',book.description));const label=externalUrl(book.url).includes('ndlsearch.ndl.go.jp')?'国立国会図書館の書誌':'出版社の書籍情報';const link=externalLink(label,book.url);if(link){link.setAttribute('aria-label',book.title+'：'+label+'（新しいタブで開く）');copy.append(link);}card.append(copy);$('books-list').append(card);});
+  list(professor.books).filter(b=>b&&str(b.title)&&b.confirmed===true).forEach((book,i)=>{
+    const card=node('article','book-card');
+    const marker=node('span','book-marker',String(i+1).padStart(2,'0'));
+    marker.setAttribute('aria-hidden','true');
+    const copy=node('div','book-entry');
+    const cover=picture(book.image,str(book.title)+'の表紙','book-cover');
+    if(cover)copy.append(cover);
+    copy.append(node('h4','',book.title));
+    if(str(book.subtitle))copy.append(node('p','book-subtitle',book.subtitle));
+    const imprint=node('div','book-imprint');
+    if(str(book.credit))imprint.append(node('p','book-credit',book.credit));
+    if(str(book.publisher))imprint.append(node('p','publisher',book.publisher));
+    if(imprint.childElementCount)copy.append(imprint);
+    if(str(book.description))copy.append(node('p','',book.description));
+    const label=externalUrl(book.url).includes('ndlsearch.ndl.go.jp')?'国立国会図書館の書誌':'出版社の書籍情報';
+    const link=externalLink(label,book.url);
+    if(link){link.setAttribute('aria-label',book.title+'：'+label+'（新しいタブで開く）');copy.append(link);}
+    card.append(marker,copy);$('books-list').append(card);
+  });
   if(!$('books-list').children.length)$('books-list').append(node('p','small-muted','出版物の情報を準備しています。'));
 
   const members=data.members||{};fill('members-date',members.asOf);fill('members-note',members.note);
